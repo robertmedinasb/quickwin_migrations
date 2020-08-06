@@ -1,8 +1,5 @@
 import xlsx from "xlsx";
 
-const newData = [];
-const errorData = [];
-
 const validations = {
   isEmail: function matchEmail(str) {
     const testregex = str.match(/(.+)@(.*)\.(.*)/);
@@ -44,6 +41,8 @@ const newBook = (newData, errorData) => {
 };
 
 const handleMigrations = (data) => {
+  const newData = [];
+  const errorData = [];
   data.forEach((row) => {
     const lastname = row["Apellido"] || "";
 
@@ -126,6 +125,8 @@ const handleMigrations = (data) => {
     newData.push(newRow);
     emails.push(email);
   });
+
+  console.log({ newData, errorData });
   return { newData, errorData };
 };
 
