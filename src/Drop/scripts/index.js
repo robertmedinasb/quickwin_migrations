@@ -85,8 +85,16 @@ const handleMigrations = (data) => {
     if (typeof dateBirthday !== "object") {
       if (typeof dateBirthday === "number" || dateBirthday === 0) {
         const thisYear = new Date().getFullYear();
-        const year = thisYear - dateBirthday;
-        row["Fecha de Nacimiento"] = new Date(`01/01/${year}`);
+        let year = thisYear - dateBirthday;
+        console.log(year);
+        const date = new Date(`${year}/01/01`);
+        row["Fecha de Nacimiento"] = date;
+        if (date === "Invalid Date") {
+          row["Fecha de Nacimiento"] = date;
+          return errorData.push(row);
+        } else {
+          row["Fecha de Nacimiento"] = date;
+        }
       } else {
         return errorData.push(row);
       }
