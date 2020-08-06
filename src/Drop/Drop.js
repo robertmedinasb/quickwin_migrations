@@ -70,6 +70,10 @@ export const Drop = () => {
       new Blob([s2ab(workBookOut)], { type: "application/octet-stream" }),
       "migrations.xlsx"
     );
+    setCurrentFile({});
+    setWorkBookOut(null);
+    setWithFile(false);
+    setIsLoading(false);
   };
 
   return (
