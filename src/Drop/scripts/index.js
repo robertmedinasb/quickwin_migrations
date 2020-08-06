@@ -45,68 +45,87 @@ const newBook = (newData, errorData) => {
 
 const handleMigrations = (data) => {
   data.forEach((row) => {
-    const email = row["Email"] || "";
-    const name = row["Nombre"] || "";
     const lastname = row["Apellido"] || "";
-    const dateBirthday =
-      typeof row["Fecha de Nacimiento"] !== "object"
-        ? parseInt(row["Fecha de Nacimiento"])
-        : row["Fecha de Nacimiento"];
-    row = row
-      ? row
-      : {
-          "Codigo(opcional)": "",
-          Nombre: "",
-          Apellido: "",
-          Email: "",
-          "Fecha de Nacimiento": "",
-          Genero: "",
-          Telefono: "",
-          Movil: "",
-        };
+
+    const newRow = {
+      "Codigo(opcional)": row["Codigo(opcional)"] || "",
+      Nombre: row["Nombre"] || "",
+      Apellido: row["Apellido"] || "",
+      "Numero de Documento de Identidad":
+        row["Numero de Documento de Identidad"] || "",
+      Email: row["Email"] || "",
+      "Contacto de emergencia": row["Contacto de emergencia"] || "",
+      "Telefono de emergencia": row["Telefono de emergencia"] || "",
+      "Fecha de Nacimiento": row["Fecha de Nacimiento"] || "",
+      Direccion: row["Direccion"] || "",
+      Genero: row["Genero"] || "",
+      "Telefono Movil": row["Telefono Movil"] || "",
+    };
+    // row["Codigo(opcional)"] = row["Codigo(opcional)"] || "";
+    // row["Nombre"] = row["Nombre"] || "";
+    // row["Apellido"] = row["Apellido"] || "";
+    // row["Numero de Documento de Identidad"] =
+    //   row["Numero de Documento de Identidad"] || "";
+    // row["Email"] = row["Email"] || "";
+    // row["Contacto de emergencia"] = row["Contacto de emergencia"] || "";
+    // row["Telefono de emergencia"] = row["Telefono de emergencia"] || "";
+    // row["Fecha de Nacimiento"] = row["Fecha de Nacimiento"] || "";
+    // row["Genero"] = row["Genero"] || "";
+    // row["Telefono Movil"] = row["Telefono Movil"] || "";
+
+    const email = newRow["Email"] || "";
+    const name = newRow["Nombre"] || "";
 
     if (!validations.isValid(name)) {
-      return errorData.push(row);
+      newRow["error"] = "Nombre inválido";
+      return errorData.push(newRow);
     }
     if (!validations.isValid(lastname)) {
-      console.log(lastname);
-      return errorData.push(row);
+      newRow["error"] = "Apellido inválido";
+      return errorData.push(newRow);
     }
     if (!validations.isEmail(email)) {
-      return errorData.push(row);
+      newRow["error"] = "Email inválido";
+      return errorData.push(newRow);
     }
-    const duplicateRow = newData.findIndex((row) => row["Email"] === email);
+    const duplicateRow = newData.findIndex((row2) => row2["Email"] === email);
     if (duplicateRow !== -1) {
+      newData[duplicateRow]["error"] = "Email se repite";
       errorData.push(newData[duplicateRow]);
       newData.splice(duplicateRow, 1);
-      errorData.push(row);
+      newRow["error"] = "Email se repite";
+      errorData.push(newRow);
       return;
     }
+    const dateBirthday =
+      typeof newRow["Fecha de Nacimiento"] !== "object"
+        ? parseInt(newRow["Fecha de Nacimiento"])
+        : newRow["Fecha de Nacimiento"];
     if (typeof dateBirthday !== "object") {
       if (typeof dateBirthday === "number" || dateBirthday === 0) {
         const thisYear = new Date().getFullYear();
         let year = thisYear - dateBirthday;
-        console.log(year);
         const date = new Date(`${year}/01/01`);
-        row["Fecha de Nacimiento"] = date;
+        newRow["Fecha de Nacimiento"] = date;
         if (date === "Invalid Date") {
-          row["Fecha de Nacimiento"] = date;
-          return errorData.push(row);
+          newRow["Fecha de Nacimiento"] = date;
+          newRow["error"] = "Fecha inválida";
+          return errorData.push(newRow);
         } else {
-          row["Fecha de Nacimiento"] = date;
+          newRow["Fecha de Nacimiento"] = date;
         }
       } else {
-        return errorData.push(row);
+        newRow["error"] = "Fecha inválida";
+        return errorData.push(newRow);
       }
     }
-    const isPhone = row["Telefono Movil"] || "";
+    const isPhone = newRow["Telefono Movil"];
     const phone = isPhone.toString();
     const newphone = phone.replace(/\D*/g, "");
-    row["Telefono Movil"] = newphone;
-    newData.push(row);
+    newRow["Telefono Movil"] = newphone;
+    newData.push(newRow);
     emails.push(email);
   });
-  console.log({ newData, errorData });
   return { newData, errorData };
 };
 
