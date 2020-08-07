@@ -56,6 +56,7 @@ export const Drop = () => {
       const nameSheets = workbook.SheetNames;
       const d = xlsx.utils.sheet_to_json(workbook.Sheets[nameSheets[0]], {
         cellDates: true,
+        dateNF: "yyyy-mm-dd",
       });
       localStorage.setItem("data", d);
       const { newData, errorData } = handleMigrations(d);
@@ -130,7 +131,7 @@ export const Drop = () => {
           onChange={(event) => handleUpload(event)}
         />
       </label>
-      {!isLoading && (
+      {!isLoading && withFile && (
         <Box {...actionButtonStyle} onClick={handleSubmit}>
           Run
         </Box>

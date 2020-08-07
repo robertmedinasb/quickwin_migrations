@@ -32,11 +32,20 @@ const newBook = (newData, errorData) => {
   };
   wb.SheetNames.push("DATA VALIDATED");
   wb.SheetNames.push("DATA REJECTED");
-  const wsv = xlsx.utils.json_to_sheet(newData);
-  const wsr = xlsx.utils.json_to_sheet(errorData);
+  const wsv = xlsx.utils.json_to_sheet(newData, {
+    cellDates: true,
+    dateNF: "yyyy/mm/dd",
+  });
+  const wsr = xlsx.utils.json_to_sheet(errorData, {
+    cellDates: true,
+    dateNF: "yyyy/mm/dd",
+  });
   wb.Sheets["DATA VALIDATED"] = wsv;
   wb.Sheets["DATA REJECTED"] = wsr;
-  const wbout = xlsx.write(wb, { bookType: "xlsx", type: "binary" });
+  const wbout = xlsx.write(wb, {
+    bookType: "xlsx",
+    type: "binary",
+  });
   return wbout;
 };
 
@@ -60,17 +69,6 @@ const handleMigrations = (data) => {
       Genero: row["Genero"] || "",
       "Telefono Movil": row["Telefono Movil"] || "",
     };
-    // row["Codigo(opcional)"] = row["Codigo(opcional)"] || "";
-    // row["Nombre"] = row["Nombre"] || "";
-    // row["Apellido"] = row["Apellido"] || "";
-    // row["Numero de Documento de Identidad"] =
-    //   row["Numero de Documento de Identidad"] || "";
-    // row["Email"] = row["Email"] || "";
-    // row["Contacto de emergencia"] = row["Contacto de emergencia"] || "";
-    // row["Telefono de emergencia"] = row["Telefono de emergencia"] || "";
-    // row["Fecha de Nacimiento"] = row["Fecha de Nacimiento"] || "";
-    // row["Genero"] = row["Genero"] || "";
-    // row["Telefono Movil"] = row["Telefono Movil"] || "";
 
     const email = newRow["Email"] || "";
     const name = newRow["Nombre"] || "";
@@ -96,12 +94,9 @@ const handleMigrations = (data) => {
       errorData.push(newRow);
       return;
     }
-    const dateBirthday =
-      typeof newRow["Fecha de Nacimiento"] !== "object"
-        ? parseInt(newRow["Fecha de Nacimiento"])
-        : newRow["Fecha de Nacimiento"];
-    if (typeof dateBirthday !== "object") {
-      if (typeof dateBirthday === "number" || dateBirthday === 0) {
+    const dateBirthday = newRow["Fecha de Nacimiento"];
+    if (typeof dateBirthday !== "object" && dateBirthday) {
+      if (!isNaN(parseInt(dateBirthday)) && parseInt(dateBirthday) !== 0) {
         const thisYear = new Date().getFullYear();
         let year = thisYear - dateBirthday;
         const date = new Date(`${year}/01/01`);
@@ -125,7 +120,6 @@ const handleMigrations = (data) => {
     newData.push(newRow);
     emails.push(email);
   });
-
   console.log({ newData, errorData });
   return { newData, errorData };
 };
