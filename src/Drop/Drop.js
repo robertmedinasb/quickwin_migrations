@@ -25,7 +25,7 @@ export const Drop = () => {
   const [isLoading, setIsLoading] = useState(null);
 
   const validateExtension = (fileName) => {
-    const test = fileName.match(/((\w+)\.((xlsx)|(xlsb)|(xls)|(ods)))/);
+    const test = fileName.match(/(.+)\.((xlsx)|(xlsb)|(xls)|(ods))/);
     return test ? true : false;
   };
   const handleDrop = (files) => {
